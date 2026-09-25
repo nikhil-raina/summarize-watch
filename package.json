@@ -1,0 +1,58 @@
+{
+  "name": "summarize-watch",
+  "version": "0.1.0",
+  "description": "Watch YouTube channels, podcast feeds and RSS feeds; summarize every new item with the summarize CLI into Obsidian-friendly markdown notes and a daily digest.",
+  "type": "module",
+  "bin": {
+    "summarize-watch": "bin/summarize-watch.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "summarize",
+    "youtube",
+    "podcast",
+    "rss",
+    "obsidian",
+    "ollama",
+    "digest",
+    "cli"
+  ],
+  "author": "Nikhil Raina",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikhil-raina/summarize-watch.git"
+  },
+  "homepage": "https://github.com/nikhil-raina/summarize-watch#readme",
+  "bugs": {
+    "url": "https://github.com/nikhil-raina/summarize-watch/issues"
+  },
+  "dependencies": {
+    "commander": "^15.0.0",
+    "fast-xml-parser": "^5.11.1",
+    "yaml": "^2.9.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
+}

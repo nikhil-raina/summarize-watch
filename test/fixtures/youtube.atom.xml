@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA"/>
+ <id>yt:channel:HnyfMqiRRG1u-2MsSQLbXA</id>
+ <yt:channelId>HnyfMqiRRG1u-2MsSQLbXA</yt:channelId>
+ <title>Veritasium</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"/>
+ <author><name>Veritasium</name><uri>https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA</uri></author>
+ <published>2010-07-21T07:18:02+00:00</published>
+ <entry>
+  <id>yt:video:VKlulHwMxgU</id>
+  <yt:videoId>VKlulHwMxgU</yt:videoId>
+  <yt:channelId>UCHnyfMqiRRG1u-2MsSQLbXA</yt:channelId>
+  <title>What happens when you open the valve?</title>
+  <link rel="alternate" href="https://www.youtube.com/shorts/VKlulHwMxgU"/>
+  <author><name>Veritasium</name><uri>https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA</uri></author>
+  <published>2026-09-24T13:00:24+00:00</published>
+  <updated>2026-09-25T18:56:00+00:00</updated>
+  <media:group>
+   <media:title>What happens when you open the valve?</media:title>
+   <media:content url="https://www.youtube.com/v/VKlulHwMxgU?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i3.ytimg.com/vi/VKlulHwMxgU/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Two balloons, one valve.</media:description>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:JsBZOcqZerk</id>
+  <yt:videoId>JsBZOcqZerk</yt:videoId>
+  <yt:channelId>UCHnyfMqiRRG1u-2MsSQLbXA</yt:channelId>
+  <title>The Insane Real Engineering of the Nazi Enigma Machine &amp; Bletchley Park</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=JsBZOcqZerk"/>
+  <author><name>Veritasium</name><uri>https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA</uri></author>
+  <published>2026-09-21T17:49:57+00:00</published>
+  <updated>2026-09-25T20:54:14+00:00</updated>
+  <media:group>
+   <media:title>The Insane Real Engineering of the Nazi Enigma Machine &amp; Bletchley Park</media:title>
+   <media:content url="https://www.youtube.com/v/JsBZOcqZerk?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:description>How Enigma worked, and how it was broken.</media:description>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:abcdefghijk</id>
+  <yt:channelId>UCHnyfMqiRRG1u-2MsSQLbXA</yt:channelId>
+  <title>Entry without yt:videoId (id derived from link)</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=abcdefghijk"/>
+  <published>2026-09-10T10:00:00+00:00</published>
+ </entry>
+</feed>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Simon Willison's Weblog: Everything</title>
+  <link href="https://simonwillison.net/" rel="alternate"/>
+  <link href="https://simonwillison.net/atom/everything/" rel="self"/>
+  <id>https://simonwillison.net/</id>
+  <updated>2026-09-24T22:02:12+00:00</updated>
+  <entry>
+    <title>Quoting someone</title>
+    <link href="https://simonwillison.net/2026/Sep/24/quote/#atom-everything" rel="alternate"/>
+    <link href="https://simonwillison.net/2026/Sep/24/quote/comments" rel="replies"/>
+    <updated>2026-09-24T22:02:12+00:00</updated>
+    <id>https://simonwillison.net/2026/Sep/24/quote/#atom-everything</id>
+    <summary type="html">&lt;p&gt;A quote&lt;/p&gt;</summary>
+  </entry>
+  <entry>
+    <title>A post with a published date and two alternate links</title>
+    <link href="https://simonwillison.net/2026/Sep/23/post/pdf" rel="alternate" type="application/pdf"/>
+    <link href="https://simonwillison.net/2026/Sep/23/post/" rel="alternate" type="text/html"/>
+    <published>2026-09-23T10:00:00+00:00</published>
+    <updated>2026-09-23T12:00:00+00:00</updated>
+    <id>tag:simonwillison.net,2026:post-23</id>
+  </entry>
+</feed>

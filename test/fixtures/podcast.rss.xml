@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+ <channel>
+  <title>Example Podcast</title>
+  <link>https://example.com/podcast</link>
+  <image><url>https://example.com/cover.jpg</url><title>Example Podcast</title><link>https://example.com/podcast</link></image>
+  <item>
+   <title>#101 &#8211; Guid with isPermaLink=false</title>
+   <link>https://example.com/episodes/101?utm_source=rss&amp;utm_medium=rss</link>
+   <pubDate>Thu, 17 Sep 2026 00:40:49 +0000</pubDate>
+   <guid isPermaLink="false">https://example.com/?p=6554</guid>
+   <description><![CDATA[<p>Episode 101 <b>notes</b></p>]]></description>
+   <enclosure url="https://media.example.com/ep101.mp3" length="5242880" type="audio/mpeg"/>
+   <itunes:duration>01:02:03</itunes:duration>
+  </item>
+  <item>
+   <title>#100 - No guid, enclosure only</title>
+   <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
+   <enclosure url="https://media.example.com/ep100.mp3" length="1000" type="audio/mpeg"/>
+  </item>
+  <item>
+   <title>#99 - Guid and link, no enclosure</title>
+   <link>https://example.com/episodes/99</link>
+   <guid>ep-99</guid>
+   <pubDate>not a date</pubDate>
+  </item>
+  <item>
+   <title>Unusable: nothing to identify</title>
+  </item>
+ </channel>
+</rss>

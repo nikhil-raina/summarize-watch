@@ -1,0 +1,106 @@
+{
+  "input": {
+    "kind": "url",
+    "url": "https://example.com",
+    "timeoutMs": 20000,
+    "youtube": "auto",
+    "videoMode": "auto",
+    "embeddedVideo": "auto",
+    "firecrawl": "auto",
+    "format": "markdown",
+    "markdown": "readability",
+    "timestamps": false,
+    "length": {
+      "kind": "preset",
+      "preset": "long"
+    },
+    "maxOutputTokens": null,
+    "model": "ollama/qwen3:14b",
+    "language": {
+      "mode": "auto"
+    }
+  },
+  "env": {
+    "hasXaiKey": false,
+    "hasOpenAIKey": false,
+    "hasOpenRouterKey": false,
+    "hasApifyToken": false,
+    "hasFirecrawlKey": false,
+    "hasGoogleKey": false,
+    "hasAnthropicKey": false
+  },
+  "extracted": {
+    "url": "https://example.com/",
+    "title": "Example Domain",
+    "description": null,
+    "siteName": "example.com",
+    "content": "This domain is for use in documentation examples without needing permission. Avoid use in operations.",
+    "truncated": false,
+    "totalCharacters": 101,
+    "wordCount": 15,
+    "transcriptCharacters": null,
+    "transcriptLines": null,
+    "transcriptWordCount": null,
+    "transcriptSource": null,
+    "transcriptionProvider": null,
+    "transcriptMetadata": {
+      "provider": "generic",
+      "reason": "not_implemented"
+    },
+    "transcriptSegments": null,
+    "transcriptTimedText": null,
+    "mediaDurationSeconds": null,
+    "sourceMetrics": null,
+    "video": null,
+    "isVideoOnly": false,
+    "diagnostics": {
+      "strategy": "html",
+      "firecrawl": {
+        "attempted": false,
+        "used": false,
+        "cacheMode": "default",
+        "cacheStatus": "unknown",
+        "notes": null
+      },
+      "markdown": {
+        "requested": true,
+        "used": false,
+        "provider": null,
+        "notes": "HTML→Markdown conversion failed: Command failed: uvx --from markitdown[all] markitdown /var/folders/62/3fwdyr_s2yg0kxd47l58d54c0000gp/T/summarize-markitdown-aIKbox/page.html\n  × No solution found when resolving tool dependencies:\n  ╰─▶ Because only the following versions of markitdown[all] are available:\n          markitdown[all]==0.0.1\n          markitdown[all]==0.0.2\n          markitdown[all]==0.1.0\n          markitdown[all]==0.1.1\n          markitdown[all]==0.1.2\n          markitdown[all]==0.1.3\n          markitdown[all]==0.1.4\n          markitdown[all]==0.1.5\n          markitdown[all]==0.1.6\n          markitdown[all]==0.1.7\n          markitdown[all]==0.1.8\n      and the current Python version (3.9.6) does not satisfy Python>=3.10, we\n      can conclude that markitdown[all]<0.1.8 cannot be used.\n      And because the current Python version (3.9.6) does not satisfy\n      Python>=3.10,<3.15 and you require markitdown[all], we can conclude that\n      your requirements are unsatisfiable.\n\nhint: Pre-releases are available for `markitdown` in the requested range (e.g., 0.1.8b2), but pre-releases weren't enabled (try: `--prerelease=allow`): × No solution found when resolving tool dependencies:\n  ╰─▶ Because only the following versions of markitdown[all] are available:\n          markitdown[all]==0.0.1\n          markitdown[all]==0.0.2\n          markitdown[all]==0.1.0\n          markitdown[all]==0.1.1\n          markitdown[all]==0.1.2\n          markitdown[all]==0.1.3\n          markitdown[all]==0.1.4\n          markitdown[all]==0.1.5\n          markitdown[all]==0.1.6\n          markitdown[all]==0.1.7\n          markitdown[all]==0.1.8\n      and the current Python version (3.9.6) does not satisfy Python>=3.10, we\n      can conclude that markitdown[all]<0.1.8 cannot be used.\n      And because the current Python version (3.9.6) does not satisfy\n      Python>=3.10,<3.15 and you require markitdown[all], we can conclude that\n      your requirements are unsatisfiable.\n\nhint: Pre-releases are available for `markitdown` in the requested range (e.g., 0.1.8b2), but pre-releases weren't enabled (try: `--prerelease=allow`)"
+      },
+      "transcript": {
+        "cacheMode": "default",
+        "cacheStatus": "miss",
+        "textProvided": false,
+        "provider": null,
+        "attemptedProviders": [],
+        "notes": null
+      },
+      "embeddedVideo": {
+        "mode": "auto",
+        "detected": false,
+        "used": false,
+        "url": null,
+        "source": null,
+        "confidence": null,
+        "composition": "article",
+        "notes": null
+      }
+    }
+  },
+  "slides": null,
+  "prompt": "<instructions>\nHard rules: never mention sponsor/ads; use straight quotation marks only (no curly quotes).\nApostrophes in contractions are OK.\nYou summarize web pages, including articles, posts, and discussion threads, for curious readers who want the gist before deciding to dive in.\nAdapt the structure to the source. For an article or transcript, lead with the central claim or takeaway and group supporting details by theme or chronology. For a discussion or comment thread, synthesize the main viewpoints and, when present, areas of agreement, disagreement, evidence, and caveats. Do not recap comments one by one or organize the summary around usernames.\nWrite a detailed summary that prioritizes the most important points first, followed by key supporting facts or events, then secondary details or conclusions stated in the source.\nParagraphs are optional; use up to 3 short paragraphs. Aim for 2-4 sentences per paragraph when you split into paragraphs.\nTarget length: around 4,200 characters (acceptable range 2,500-6,000). This is a soft guideline; prioritize clarity.\nExtracted content length: 101 characters. Hard limit: never exceed this length. If the requested length is larger, do not pad—finish early rather than adding filler.\nMatch the dominant source language. If you can't confidently detect it, use English.\nUse one blank line between Markdown blocks such as paragraphs, headings, and lists. Keep list items on consecutive lines with no blank lines between them.\nDo not use emojis, disclaimers, or speculation.\nWrite in direct, factual language.\nFormat the answer in Markdown and obey the length-specific formatting above.\nMake multi-point summaries easy to scan. Lead with a concise overview, then separate distinct themes or viewpoints with descriptive Markdown headings using the \"### \" prefix and/or short bullet lists. Keep paragraphs short and never put a multi-point summary in one uninterrupted paragraph. For a short or simple source, do not force headings or lists.\nInclude 1-2 short exact excerpts (max 25 words each) formatted as Markdown italics using single asterisks when there is a strong, non-sponsor line. Use straight quotation marks (no curly) as needed. If no suitable line exists, omit excerpts. Never include ad/sponsor/boilerplate excerpts and do not mention them.\nBase everything strictly on the provided content and never invent details.\nFinal check: remove any sponsor/ad references or mentions of skipping/ignoring content. Ensure excerpts (if any) are italicized and use only straight quotes.\nFinal check for slides: every [slide:N] must be immediately followed by a line that starts with \"## \". Remove any \"Title:\" or \"Slide\" label lines.\nYou are not given any quotes from people who shared this link. Do not fabricate reactions or add a \"What sharers are saying\" subsection.\n</instructions>\n\n<context>\nSource URL: https://example.com/\nPage name: Example Domain\nSite: example.com\n</context>\n\n<content>\nThis domain is for use in documentation examples without needing permission. Avoid use in operations.\n</content>\n",
+  "llm": null,
+  "metrics": {
+    "llm": [],
+    "services": {
+      "firecrawl": {
+        "requests": 0
+      },
+      "apify": {
+        "requests": 0
+      }
+    }
+  },
+  "summary": null
+}
