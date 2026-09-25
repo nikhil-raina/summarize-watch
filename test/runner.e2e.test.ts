@@ -192,6 +192,20 @@ describe('runOnce end to end (fake summarize)', () => {
     p.state.close();
   });
 
+  it('direct-audio (asset) envelopes produce a note and a transcript recovered from the prompt', async () => {
+    const p = project(withBase(baseYaml()));
+    process.env.FAKE_SUMMARIZE_MODE = 'asset';
+    const r = await runOnce(p.loaded, p.state, { fetchImpl: fakeFetch(), killGraceMs: 5_000, skipWarmUp: true, sourceFilter: 'pod', limit: 1 });
+    expect(r.processed[0]?.outcome.kind).toBe('summarized');
+    const note = fs.readFileSync(path.join(p.loaded.paths.outputDir, r.processed[0]?.notePath as string), 'utf8');
+    expect(note).toContain('source_type: podcast');
+    expect(note).toContain('transcript_source: transcription');
+    expect(note).toContain('Summary of the Home Depot Podcast Episode');
+    const transcript = fs.readFileSync(path.join(p.loaded.paths.transcriptsDir, r.processed[0]?.notePath as string), 'utf8');
+    expect(transcript).toContain('Welcome to season 15 episode 1 of Acquired');
+    p.state.close();
+  });
+
   it('short content is filed verbatim instead of failing', async () => {
     const p = project(withBase(baseYaml()));
     process.env.FAKE_SUMMARIZE_MODE = 'extract'; // summary null, 101 chars

@@ -1,0 +1,60 @@
+{
+  "input": {
+    "kind": "file",
+    "filePath": "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3 (transcript)",
+    "timeoutMs": 900000,
+    "length": {
+      "kind": "preset",
+      "preset": "long"
+    },
+    "maxOutputTokens": null,
+    "model": "ollama/qwen3:14b",
+    "language": {
+      "mode": "auto"
+    },
+    "url": "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3"
+  },
+  "env": {
+    "hasXaiKey": false,
+    "hasOpenAIKey": false,
+    "hasOpenRouterKey": false,
+    "hasApifyToken": false,
+    "hasFirecrawlKey": false,
+    "hasGoogleKey": false,
+    "hasAnthropicKey": false
+  },
+  "extracted": {
+    "kind": "asset",
+    "source": "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3 (transcript)",
+    "mediaType": "text/plain",
+    "filename": "568b6b7a.mp3.transcript.txt"
+  },
+  "prompt": "<instructions>\nHard rules: never mention sponsor/ads; never output quotation marks of any kind (straight or curly), even for titles.\nNever include quotation marks in the output. Apostrophes in contractions are OK. If a title or excerpt would normally use quotes, remove them and optionally italicize the text instead.\nYou summarize files for curious users.\nSummarize the file content below.\nBe factual and do not invent details.\nWrite a detailed summary that prioritizes the most important points first, followed by key supporting facts or events, then secondary details or conclusions stated in the source.\nParagraphs are optional; use up to 3 short paragraphs. Aim for 2-4 sentences per paragraph when you split into paragraphs.\nFormat the answer in Markdown.\nUse short paragraphs; use bullet lists only when they improve scanability; avoid rigid templates.\nIf a standout line is present, include 1-2 short exact excerpts (max 25 words each) formatted as Markdown italics using single asterisks only. Do not use quotation marks of any kind (straight or curly). Remove any quotation marks from excerpts. If you cannot format an italic excerpt, omit it. Never include ad/sponsor/boilerplate excerpts and do not mention them.\nDo not use emojis.\nTarget length: around 4,200 characters (acceptable range 2,500-6,000). This is a soft guideline; prioritize clarity.\nMatch the dominant source language. If you can't confidently detect it, use English.\nFinal check: remove any sponsor/ad references or mentions of skipping/ignoring content. Remove any quotation marks. Ensure standout excerpts are italicized; otherwise omit them.\nReturn only the summary.\n</instructions>\n\n<context>\nFilename: 568b6b7a.mp3.transcript.txt\nOriginal media type: text/plain\nProvided as: text/plain\nExtracted content length: 191,967 characters. Hard limit: never exceed this length. If the requested length is larger, do not pad\u2014finish early rather than adding filler.\n</context>\n\n<content>\nTranscript:\nWelcome to season 15 episode 1 of Acquired, the podcast about great companies.\nToday we tell the story of The Home Depot.\n[BLANK_AUDIO]\n</content>\n",
+  "llm": {
+    "provider": "ollama",
+    "model": "ollama/qwen3:14b",
+    "maxCompletionTokens": null,
+    "strategy": "single"
+  },
+  "metrics": {
+    "llm": [
+      {
+        "provider": "ollama",
+        "model": "ollama/qwen3:14b",
+        "calls": 1,
+        "promptTokens": 16382,
+        "completionTokens": 1375,
+        "totalTokens": 17761
+      }
+    ],
+    "services": {
+      "firecrawl": {
+        "requests": 0
+      },
+      "apify": {
+        "requests": 0
+      }
+    }
+  },
+  "summary": "**Summary of the Home Depot Podcast Episode:**\n\nThis episode delves into the rise and transformation of Home Depot, focusing on its leadership challenges, strategic shifts, and long-term success. Key points include:\n\n---\n\n### **1. Bob Nardelli's Tenure (2000\u20132007):**\n- **Growth vs. Misalignment:** Nardelli expanded Home Depot\u2019s revenue and profits by opening new stores, but same-store sales stagnated. His compensation was tied to performance metrics (revenue, profits) rather than stock price, which Wall Street criticized as misaligned with long-term value creation.\n- **Shareholder Backlash:**\n"
+}

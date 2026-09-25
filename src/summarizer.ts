@@ -13,9 +13,14 @@ export const EnvelopeSchema = z
     input: z.object({ url: z.string().optional() }).passthrough().optional(),
     extracted: z
       .object({
+        // URL flow: url/title/content/...; asset flow (direct audio, local files): kind/source/filename/mediaType
+        kind: z.string().optional(),
+        source: z.string().optional(),
+        filename: z.string().optional(),
+        mediaType: z.string().optional(),
         url: z.string().optional(),
         title: z.string().nullable().optional(),
-        content: z.string(),
+        content: z.string().optional(),
         wordCount: z.number().optional(),
         transcriptSource: z.string().nullable().optional(),
         transcriptionProvider: z.string().nullable().optional(),
@@ -42,11 +47,41 @@ export const EnvelopeSchema = z
       .passthrough()
       .nullable()
       .optional(),
+    prompt: z.string().nullable().optional(),
     summary: z.string().nullable(),
   })
   .passthrough();
 
-export type Envelope = z.infer<typeof EnvelopeSchema>;
+type RawEnvelope = z.infer<typeof EnvelopeSchema>;
+
+/** Parsed envelope with `extracted.content` guaranteed (possibly empty). */
+export type Envelope = RawEnvelope & { extracted: RawEnvelope['extracted'] & { content: string } };
+
+/**
+ * The direct-media ("asset") flow omits the text from `extracted` in summary mode; the transcript
+ * is only present inside the prompt as `<content>\n…\n</content>` (upstream prompts/format.ts).
+ * A leading "Transcript:" label is dropped.
+ */
+export function contentFromPrompt(prompt: string | null | undefined): string | null {
+  if (!prompt) return null;
+  const start = prompt.indexOf('<content>\n');
+  const end = prompt.lastIndexOf('</content>');
+  if (start < 0 || end < 0 || end <= start) return null;
+  let body = prompt.slice(start + '<content>\n'.length, end).replace(/\n$/, '');
+  body = body.replace(/^Transcript:\n/, '');
+  return body.trim() ? body : null;
+}
+
+export function normalizeEnvelope(raw: RawEnvelope): Envelope {
+  const extracted = { ...raw.extracted };
+  if (typeof extracted.content !== 'string') {
+    extracted.content = contentFromPrompt(raw.prompt) ?? '';
+    if (!extracted.transcriptSource && extracted.kind === 'asset' && /\(transcript\)$/.test(extracted.source ?? '')) {
+      extracted.transcriptSource = 'transcription';
+    }
+  }
+  return { ...raw, extracted: extracted as Envelope['extracted'] };
+}
 
 export function sumTokens(env: Envelope): { prompt: number; completion: number } {
   let prompt = 0;
@@ -78,7 +113,7 @@ export function parseEnvelope(stdout: string): ParsedEnvelope {
       continue;
     }
     const parsed = EnvelopeSchema.safeParse(raw);
-    if (parsed.success) return { ok: true, envelope: parsed.data };
+    if (parsed.success) return { ok: true, envelope: normalizeEnvelope(parsed.data) };
     lastError = `envelope shape changed: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'} ${i.message}`).join('; ')}`;
   }
   return { ok: false, error: lastError };
@@ -220,6 +255,7 @@ export function classify(raw: RawResult, opts: { shortContentChars: number }): O
   const content = env.extracted.content;
   const noSummary = env.llm === null || summary === null || summary.trim() === '' || summary === content;
   if (noSummary) {
+    if (!content.trim()) return { kind: 'not_summarized', envelope: env, error: 'summarize returned neither a summary nor extracted content' };
     if (content.length < opts.shortContentChars) return { kind: 'short_verbatim', envelope: env };
     const why =
       env.llm === null

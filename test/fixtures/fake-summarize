@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # A stand-in for the real `summarize` CLI. Behaviour is chosen with FAKE_SUMMARIZE_MODE:
-#   success (default) | llm-null | extract | fail | hang | garbage | prefixed | usage
+#   success (default) | llm-null | extract | asset | fail | hang | garbage | prefixed | usage
 # FAKE_SUMMARIZE_VERSION overrides what --version prints; FAKE_SUMMARIZE_LOG appends each argv line.
 set -uo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,7 +17,7 @@ emit() {
     const fs = require("node:fs");
     const d = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
     d.input = Object.assign(d.input || {}, { url: process.argv[2] });
-    d.extracted.url = process.argv[2];
+    if ("url" in d.extracted || !d.extracted.kind) d.extracted.url = process.argv[2];
     if (!/youtube\.com|youtu\.be|\.(mp3|m4a|mp4|wav)(\?|$)/.test(process.argv[2])) {
       d.extracted.video = null; d.extracted.transcriptSource = null; d.extracted.mediaDurationSeconds = null;
     }
@@ -29,6 +29,7 @@ case "$MODE" in
   success)  emit "$DIR/envelope-success.json" ;;
   llm-null) emit "$DIR/envelope-llm-null.json" ;;
   extract)  emit "$DIR/envelope-extract.json" ;;
+  asset)    emit "$DIR/envelope-asset.json" ;;
   prefixed) echo "Fetching https://example.com ..."; emit "$DIR/envelope-success.json" ;;
   garbage)  echo "Fetching ..."; echo "this is not json"; exit 0 ;;
   fail)     printf '\033[31mError:\033[0m No transcript available for this video\n' >&2; exit 1 ;;

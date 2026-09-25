@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { EffectiveSummarize } from '../src/config.js';
-import { buildArgs, checkSummarizeVersion, classify, compareVersions, parseEnvelope, parseVersion, type RawResult, runSummarize, summarizeErrorLine } from '../src/summarizer.js';
+import { buildArgs, checkSummarizeVersion, classify, compareVersions, contentFromPrompt, parseEnvelope, parseVersion, type RawResult, runSummarize, summarizeErrorLine } from '../src/summarizer.js';
 import { FIXTURES, fixture } from './helpers.js';
 
 const FAKE = path.join(FIXTURES, 'fake-summarize');
@@ -41,9 +41,40 @@ describe('parseEnvelope', () => {
     const g = parseEnvelope('Fetching...\nnot json');
     expect(g.ok).toBe(false);
     expect(!g.ok && g.error).toMatch(/not JSON/);
-    const drift = parseEnvelope(JSON.stringify({ extracted: { title: 'x' }, llm: null, summary: null }));
-    expect(!drift.ok && drift.error).toMatch(/envelope shape changed.*extracted\.content/);
+    const drift = parseEnvelope(JSON.stringify({ result: { text: 'x' }, llm: null, summary: null }));
+    expect(!drift.ok && drift.error).toMatch(/envelope shape changed.*extracted/);
+    const noSummaryKey = parseEnvelope(JSON.stringify({ extracted: { content: 'x' }, llm: null }));
+    expect(!noSummaryKey.ok && noSummaryKey.error).toMatch(/envelope shape changed.*summary/);
     expect(parseEnvelope('').ok).toBe(false);
+  });
+});
+
+describe('asset (direct audio) envelopes', () => {
+  it('accepts the metadata-only extracted block and recovers the transcript from the prompt', () => {
+    const r = parseEnvelope(fixture('envelope-asset.json'));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.envelope.extracted.kind).toBe('asset');
+    expect(r.envelope.extracted.content.startsWith('Welcome to season 15 episode 1 of Acquired')).toBe(true);
+    expect(r.envelope.extracted.content).not.toContain('Transcript:');
+    expect(r.envelope.extracted.content).not.toContain('</content>');
+    expect(r.envelope.extracted.transcriptSource).toBe('transcription');
+    const o = classify(raw({ stdout: fixture('envelope-asset.json') }), { shortContentChars: 1500 });
+    expect(o.kind).toBe('summarized');
+    expect(o.kind === 'summarized' && o.tokensPrompt).toBe(16382);
+  });
+  it('contentFromPrompt is strict about the delimiters', () => {
+    expect(contentFromPrompt('<instructions>x</instructions>\n\n<content>\nTranscript:\nhello\nworld\n</content>\n')).toBe('hello\nworld');
+    expect(contentFromPrompt('<content>\nplain\n</content>')).toBe('plain');
+    expect(contentFromPrompt('no markers here')).toBeNull();
+    expect(contentFromPrompt(null)).toBeNull();
+    expect(contentFromPrompt('<content>\n\n</content>')).toBeNull();
+  });
+  it('an asset with neither summary nor content is not filed verbatim', () => {
+    const env = JSON.parse(fixture('envelope-asset.json')) as { summary: string | null; llm: unknown; prompt: string | null };
+    env.summary = null; env.llm = null; env.prompt = null;
+    const o = classify(raw({ stdout: JSON.stringify(env) }), { shortContentChars: 1500 });
+    expect(o.kind).toBe('not_summarized');
   });
 });
 
