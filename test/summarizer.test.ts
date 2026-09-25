@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { EffectiveSummarize } from '../src/config.js';
-import { buildArgs, checkSummarizeVersion, classify, compareVersions, parseEnvelope, parseVersion, type RawResult, runSummarize } from '../src/summarizer.js';
+import { buildArgs, checkSummarizeVersion, classify, compareVersions, parseEnvelope, parseVersion, type RawResult, runSummarize, summarizeErrorLine } from '../src/summarizer.js';
 import { FIXTURES, fixture } from './helpers.js';
 
 const FAKE = path.join(FIXTURES, 'fake-summarize');
@@ -75,6 +75,24 @@ describe('classify', () => {
     const g = classify(raw({ stdout: 'Fetching...\nnope' }), shortOpts);
     expect(g.kind).toBe('invalid_envelope');
     expect(g.kind === 'invalid_envelope' && g.rawStdout).toBe('Fetching...\nnope');
+  });
+});
+
+describe('summarizeErrorLine', () => {
+  it('prefers the line that says what went wrong over the trailing option list', () => {
+    const stderr = [
+      'No transcription provider is configured for this media.',
+      'Options:',
+      '1. Groq: Set GROQ_API_KEY=...',
+      '8. Local whisper.cpp:',
+      '   brew install whisper-cpp',
+      '   Ensure whisper-cli is on your PATH',
+      'See: summarize transcriber help',
+    ].join('\n');
+    expect(summarizeErrorLine(stderr)).toBe('No transcription provider is configured for this media. (See: summarize transcriber help)');
+    expect(summarizeErrorLine('Fetching...\nError: No transcript available for this video')).toBe('Error: No transcript available for this video');
+    expect(summarizeErrorLine('just one line')).toBe('just one line');
+    expect(summarizeErrorLine('')).toBe('');
   });
 });
 

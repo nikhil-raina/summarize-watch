@@ -202,6 +202,29 @@ the raw output is saved to `state/last-invalid.json` and the item retries later.
 - **`cli: claude|codex|gemini`**: reuses a subscription you already pay for, adds a few seconds per
   item.
 
+## Podcasts need a transcriber
+
+YouTube usually has captions, so videos work with nothing but a model. Podcast audio has to be
+transcribed first, and `summarize` leaves that to a provider you choose. The free, local option:
+
+```bash
+brew install whisper-cpp
+mkdir -p ~/.summarize/cache/whisper-cpp/models
+curl -L -o ~/.summarize/cache/whisper-cpp/models/ggml-base.bin \
+  https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin
+```
+
+`summarize` looks for `whisper-cli` on PATH and that exact model file (override with
+`SUMMARIZE_WHISPER_CPP_MODEL_PATH`; `ggml-small.en.bin` or `ggml-medium.en.bin` from the same repo
+are better for English at the cost of speed). Cloud alternatives: set `GROQ_API_KEY`,
+`OPENAI_API_KEY`, `ASSEMBLYAI_API_KEY`, `GEMINI_API_KEY`, `FAL_KEY` or `DEEPGRAM_API_KEY` and
+`summarize` picks them up. `doctor` tells you which route it can see. Until one exists, podcast
+episodes without a published transcript fail with `No transcription provider` and retry later.
+
+Budget note: a three-hour episode is roughly 45k tokens of transcript, more than a 32k local
+context. `summarize` fits what it can; for very long shows prefer an API model or accept that the
+summary covers the first part.
+
 ## Limitations (v1)
 
 - Discovery is feed-based: YouTube feeds list only the latest 15 videos, so a channel is followed
@@ -222,7 +245,7 @@ missing? A star helps me see whether to keep going.
 
 ```bash
 npm install
-npm run typecheck && npm test      # 75 tests; the integration test uses the real summarize if installed
+npm run typecheck && npm test      # 76 tests; the integration test uses the real summarize if installed
 npx tsx src/cli.ts doctor          # run from source
 ```
 

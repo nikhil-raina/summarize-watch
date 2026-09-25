@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { CliError, type GlobalOptions } from '../cli-types.js';
@@ -146,7 +147,24 @@ export async function doctor(opts: GlobalOptions): Promise<void> {
     }
   }
 
-  // 8. optional media tools
+  // 8. transcription path (podcasts and caption-less videos need one)
+  const needsTranscription = sources.some((s) => s.enabled && s.type === 'podcast');
+  const cloudKeys = ['GROQ_API_KEY', 'ASSEMBLYAI_API_KEY', 'GEMINI_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'GOOGLE_API_KEY', 'OPENAI_API_KEY', 'FAL_KEY', 'DEEPGRAM_API_KEY'].filter((k) => process.env[k]);
+  const onnx = ['SUMMARIZE_ONNX_PARAKEET_CMD', 'SUMMARIZE_ONNX_CANARY_CMD'].filter((k) => process.env[k]);
+  const whisperBin = process.env.SUMMARIZE_WHISPER_CPP_BINARY ?? 'whisper-cli';
+  const whisperOnPath = which(whisperBin);
+  const whisperModel = process.env.SUMMARIZE_WHISPER_CPP_MODEL_PATH ?? path.join(os.homedir(), '.summarize', 'cache', 'whisper-cpp', 'models', 'ggml-base.bin');
+  const whisperModelPresent = fs.existsSync(whisperModel);
+  const routes: string[] = [];
+  if (cloudKeys.length) routes.push(`cloud (${cloudKeys.join(', ')})`);
+  if (onnx.length) routes.push('local ONNX');
+  if (whisperOnPath && whisperModelPresent) routes.push('local whisper.cpp');
+  if (whisperOnPath && !whisperModelPresent) say('warn', `whisper-cli is installed but its model is missing: ${whisperModel} (summarize does not download it; see README → Podcasts)`);
+  if (routes.length) say('ok', `transcription available via ${routes.join(', ')}`);
+  else if (needsTranscription) say('warn', 'no transcription route: podcast episodes without published transcripts will fail. Local: brew install whisper-cpp + download a ggml model (README → Podcasts). Cloud: set GROQ_API_KEY or OPENAI_API_KEY (see `summarize transcriber help`).');
+  else say('info', 'no transcription route configured (only needed for podcasts and videos without captions)');
+
+  // 9. optional media tools
   for (const tool of ['ffmpeg', 'yt-dlp']) {
     say(which(tool) ? 'ok' : 'info', `${tool} ${which(tool) ? 'on PATH' : 'not on PATH (optional; summarize bundles a WebAssembly ffmpeg, yt-dlp helps with tricky videos)'}`);
   }

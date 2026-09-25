@@ -173,7 +173,7 @@ export function runSummarize(opts: RunSummarizeOptions): Promise<RawResult> {
       resolve({
         ...result,
         stdout: Buffer.concat(stdout).toString('utf8'),
-        stderrTail: tail(stripAnsi(Buffer.concat(stderr).toString('utf8')), opts.stderrTailChars ?? 600),
+        stderrTail: tail(stripAnsi(Buffer.concat(stderr).toString('utf8')), opts.stderrTailChars ?? 2_000),
         timedOut,
         aborted,
         durationMs: Date.now() - started,
@@ -231,12 +231,23 @@ export function classify(raw: RawResult, opts: { shortContentChars: number }): O
   return { kind: 'summarized', envelope: env, tokensPrompt: tokens.prompt, tokensCompletion: tokens.completion };
 }
 
-/** The most informative single line of a stderr tail: the last non-empty one. */
-function lastLine(s: string): string {
-  const lines = s.split('\n').map((l) => l.trim()).filter(Boolean);
-  const last = lines[lines.length - 1] ?? s.trim();
-  return last.length > 300 ? `${last.slice(0, 299)}…` : last;
+/**
+ * The most informative line of a stderr tail. summarize often ends with a numbered list of options
+ * and a "See: summarize transcriber help" pointer; the line that says what went wrong comes first.
+ */
+export function summarizeErrorLine(stderrTail: string): string {
+  const lines = stderrTail.split('\n').map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return '';
+  const isHint = (l: string) => /^(\d+[.)]\s|See:|Set [A-Z_]+=|brew |npm |Ensure |Install |Configure |Or |Options?:?$)/i.test(l);
+  const candidates = lines.filter((l) => !isHint(l));
+  const informative = candidates.find((l) => /error|fail|no (transcription|transcript|model|provider|caption)|not (found|available|supported|configured)|unable|cannot|could not|missing|unsupported|timed out|blocked|denied|forbidden|429|403/i.test(l));
+  let picked = informative ?? candidates[candidates.length - 1] ?? lines[lines.length - 1] ?? '';
+  const see = lines.find((l) => /^See:/i.test(l));
+  if (see && picked !== see && !picked.includes(see)) picked = `${picked} (${see})`;
+  return picked.length > 300 ? `${picked.slice(0, 299)}…` : picked;
 }
+
+const lastLine = summarizeErrorLine;
 
 // ---------- version ----------
 
