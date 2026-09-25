@@ -270,7 +270,7 @@ export async function runOnce(loaded: LoadedConfig, state: State, opts: RunOptio
         const list = entries.get(item.sourceName) ?? [];
         list.push({ title: written.title, noteRel: written.notePath, url: item.url, excerpt: outcome.kind === 'summarized' ? excerpt(env.summary ?? '') : '', verbatim: outcome.kind !== 'summarized' });
         entries.set(item.sourceName, list);
-        const tok = tokensPrompt !== null ? ` · ${(tokensPrompt / 1000).toFixed(1)}k tok` : '';
+        const tok = tokensPrompt === null ? '' : tokensPrompt === 0 && !tokensCompletion ? ' · cached' : ` · ${(tokensPrompt / 1000).toFixed(1)}k tok`;
         log.info(`[done ] ${label}${tok} · ${formatDuration(raw.durationMs)} → ${written.notePath}`);
         return result;
       }
@@ -426,7 +426,7 @@ function truncate(s: string, n: number): string {
 
 export function renderReport(report: RunReport): string {
   const ms = new Date(report.finishedAt).getTime() - new Date(report.startedAt).getTime();
-  const when = `${report.startedAt.slice(0, 16).replace('T', ' ')} → ${report.finishedAt.slice(11, 16)} (${formatDuration(Math.max(ms, 0))})`;
+  const when = `${localStamp(report.startedAt)} → ${localStamp(report.finishedAt).slice(11)} (${formatDuration(Math.max(ms, 0))})`;
   const lines: string[] = [];
   lines.push(`summarize-watch ${report.dryRun ? 'dry run' : `run${report.runId ? ` #${report.runId}` : ''}`} · ${when}${report.aborted ? ' · ABORTED' : ''}`);
   const failedPolls = report.polls.filter((p) => !p.ok);
@@ -458,10 +458,17 @@ export function renderReport(report: RunReport): string {
     lines.push('failed');
     for (const f of failed) {
       const o = f.outcome as Extract<Outcome, { error: string }>;
-      lines.push(`  #${f.item.id} ${f.item.sourceName} · ${truncate(f.item.title ?? f.item.url, 50)} · ${o.kind} · ${truncate(o.error, 90)} · ${f.nextAttemptAt ? `retry ${f.nextAttemptAt.slice(0, 16).replace('T', ' ')}` : 'gave up'}`);
+      lines.push(`  #${f.item.id} ${f.item.sourceName} · ${truncate(f.item.title ?? f.item.url, 50)} · ${o.kind} · ${truncate(o.error, 90)} · ${f.nextAttemptAt ? `retry ${localStamp(f.nextAttemptAt)}` : 'gave up'}`);
     }
   }
   return lines.join('\n');
+}
+
+/** "2026-09-25 16:27" in the machine's local time. */
+export function localStamp(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
 function shellQuote(s: string): string {

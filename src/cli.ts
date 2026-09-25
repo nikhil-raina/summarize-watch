@@ -2,13 +2,15 @@ import { createRequire } from 'node:module';
 import { Command, Option } from 'commander';
 import { CliError, type GlobalOptions } from './cli-types.js';
 import { ConfigError } from './config.js';
-import { log, setLogLevel, suppressSqliteExperimentalWarning } from './util.js';
+import { log, setLogLevel, suppressSqliteExperimentalWarning, trustSystemCertificates } from './util.js';
 
 export { CliError, type GlobalOptions } from './cli-types.js';
 
 // Must run before any module that imports node:sqlite is evaluated. Command handlers import
 // ./state.js lazily for exactly this reason.
 suppressSqliteExperimentalWarning();
+// Trust the OS keychain too (corporate TLS inspection); harmless elsewhere.
+trustSystemCertificates();
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json') as { version: string; description: string };

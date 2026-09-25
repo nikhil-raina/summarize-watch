@@ -50,9 +50,15 @@ export async function fetchText(url: string, opts: FetchTextOptions = {}): Promi
       },
     });
   } catch (e) {
-    const err = e as Error & { name?: string };
+    const err = e as Error & { name?: string; cause?: { code?: string; message?: string } };
     const timedOut = err.name === 'TimeoutError' || err.name === 'AbortError';
-    throw new FetchError(timedOut ? `fetch timed out after ${Math.round(timeoutMs / 1000)}s` : `fetch failed: ${err.message}`, url, null, e);
+    if (timedOut) throw new FetchError(`fetch timed out after ${Math.round(timeoutMs / 1000)}s`, url, null, e);
+    const code = err.cause?.code ?? '';
+    const detail = code || err.cause?.message || err.message;
+    const tlsHint = /CERT|SELF_SIGNED|UNABLE_TO_VERIFY|DEPTH_ZERO/.test(code)
+      ? ' (TLS trust problem: a corporate proxy may be re-signing certificates; on Node < 24.5 run with NODE_USE_SYSTEM_CA=1 or set NODE_EXTRA_CA_CERTS)'
+      : '';
+    throw new FetchError(`fetch failed: ${detail}${tlsHint}`, url, null, e);
   }
   const location = res.headers.get('location');
   if (opts.redirect === 'manual' && res.status >= 300 && res.status < 400) {

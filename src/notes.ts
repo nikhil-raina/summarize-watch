@@ -227,6 +227,12 @@ export function appendDigest(digestsDir: string, section: DigestSection): string
   return file;
 }
 
+function localClock(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 export function renderDigestSection(s: DigestSection): string {
   const hm = (iso: string) => {
     const d = new Date(iso);
@@ -246,7 +252,7 @@ export function renderDigestSection(s: DigestSection): string {
   if (s.failed.length) {
     lines.push('', `### Failed (${s.failed.length})`);
     for (const f of s.failed) {
-      const retry = f.nextAttemptAt ? `retry ${f.nextAttemptAt.slice(0, 16).replace('T', ' ')}` : 'gave up';
+      const retry = f.nextAttemptAt ? `retry ${localClock(f.nextAttemptAt)}` : 'gave up';
       lines.push(`- ${f.source} · [${f.title.replace(/[[\]]/g, '')}](${f.url}) — ${f.kind}: ${f.error} (attempt ${f.attempts}, ${retry})`);
     }
   }

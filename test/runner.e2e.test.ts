@@ -150,7 +150,7 @@ describe('runOnce end to end (fake summarize)', () => {
     expect(failed[0]).toMatchObject({ attempts: 1, nextAttemptAt: '2026-09-25T04:00:00.000Z', lastErrorKind: 'failed_exit', lastError: 'Error: No transcript available for this video' });
     const digest = fs.readFileSync(report.digestPath as string, 'utf8');
     expect(digest).toContain('### Failed (7)');
-    expect(digest).toContain('retry 2026-09-25 04:00');
+    expect(digest).toMatch(/retry \d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
 
     // not due yet → nothing processed
     const later = await runOnce(p.loaded, p.state, { fetchImpl: fakeFetch(), killGraceMs: 5_000, skipWarmUp: true, now: () => new Date('2026-09-25T03:30:00.000Z') });

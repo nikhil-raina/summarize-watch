@@ -1,5 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
+import tls from 'node:tls';
 
 // ---------- durations ----------
 
@@ -154,4 +155,49 @@ export function suppressSqliteExperimentalWarning(): void {
     if (type === 'ExperimentalWarning' && /sqlite/i.test(text)) return;
     return (original as (...args: unknown[]) => void)(warning, ...rest);
   }) as typeof process.emitWarning;
+}
+
+// ---------- TLS trust ----------
+
+export interface SystemCaResult {
+  supported: boolean;
+  added: number;
+  skipped: boolean;
+}
+
+/**
+ * Many work machines sit behind TLS-inspecting proxies (Cloudflare Gateway, Zscaler, Netskope) whose
+ * root lives in the OS keychain but not in Node's bundled Mozilla list, so `fetch` fails with
+ * SELF_SIGNED_CERT_IN_CHAIN while curl works. Node >= 24.5 / 22.19 can merge the system store at
+ * runtime; older Nodes need `--use-system-ca` or NODE_EXTRA_CA_CERTS. Opt out with
+ * SUMMARIZE_WATCH_NO_SYSTEM_CA=1. Idempotent.
+ */
+export function trustSystemCertificates(env: NodeJS.ProcessEnv = process.env): SystemCaResult {
+  if (env.SUMMARIZE_WATCH_NO_SYSTEM_CA === '1') return { supported: true, added: 0, skipped: true };
+  const t = tls as unknown as {
+    getCACertificates?: (type: 'default' | 'system' | 'bundled' | 'extra') => string[];
+    setDefaultCACertificates?: (certs: string[]) => void;
+  };
+  if (typeof t.getCACertificates !== 'function' || typeof t.setDefaultCACertificates !== 'function') {
+    return { supported: false, added: 0, skipped: false };
+  }
+  const marker = '__summarizeWatchSystemCa';
+  const proc = process as unknown as Record<string, unknown>;
+  if (typeof proc[marker] === 'number') return { supported: true, added: proc[marker] as number, skipped: false };
+  try {
+    const current = t.getCACertificates('default');
+    const system = t.getCACertificates('system');
+    const have = new Set(current.map(normalizePem));
+    const extra = system.filter((c) => !have.has(normalizePem(c)));
+    if (extra.length) t.setDefaultCACertificates([...current, ...extra]);
+    proc[marker] = extra.length;
+    return { supported: true, added: extra.length, skipped: false };
+  } catch {
+    proc[marker] = 0;
+    return { supported: true, added: 0, skipped: false };
+  }
+}
+
+function normalizePem(pem: string): string {
+  return pem.replace(/\s+/g, '');
 }

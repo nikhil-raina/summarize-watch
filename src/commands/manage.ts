@@ -3,6 +3,7 @@ import path from 'node:path';
 import { CliError, type GlobalOptions } from '../cli-types.js';
 import { CONFIG_FILENAME, configPaths, loadConfig, parseConfigText, renderStarterConfig } from '../config.js';
 import type { ItemRow, ItemStatus } from '../state.js';
+import { localStamp } from '../runner.js';
 import { log, resolvePath } from '../util.js';
 
 // ---------- init ----------
@@ -90,7 +91,7 @@ export function renderItemTable(items: ItemRow[]): string {
 
 function nextColumn(i: ItemRow): string {
   if (i.status === 'failed') {
-    const when = i.nextAttemptAt ? `retry ${i.nextAttemptAt.slice(0, 16).replace('T', ' ')}` : 'gave up';
+    const when = i.nextAttemptAt ? `retry ${localStamp(i.nextAttemptAt)}` : 'gave up';
     return truncate(`${when} · ${i.lastErrorKind ?? ''} ${i.lastError ?? ''}`.trim(), 60);
   }
   if (i.status === 'skipped') return truncate(i.skipReason ?? 'skipped', 60);

@@ -107,7 +107,7 @@ describe('digest', () => {
     expect(md).toContain('### veritasium (1)');
     expect(md).toContain('[[2026-09-21 enigma|Enigma   machine]] — First sentence.');
     expect(md).toContain('### Failed (1)');
-    expect(md).toContain('acquired · [Ep 1](u2) — failed_exit: No transcript (attempt 1, retry 2026-09-25 04:00)');
+    expect(md).toMatch(/acquired · \[Ep 1\]\(u2\) — failed_exit: No transcript \(attempt 1, retry \d{4}-\d{2}-\d{2} \d{2}:\d{2}\)/);
     expect(md).toContain('- 2 shorts');
     expect(md).toContain('**Totals:** 2 processed · 1 done · 1 failed · 2 skipped · 12,345 / 890 tokens · ollama/qwen3:14b');
   });
