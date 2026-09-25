@@ -3,14 +3,18 @@
 <!--
   Nightly summarize-watch run at 03:00 local time (macOS launchd).
 
-  1. Edit the two paths below (watch.yaml location and log folder).
-  2. cp sh.summarize-watch.plist ~/Library/LaunchAgents/
+  launchd does not read your shell profile, and nvm is usually sourced from .zshrc, which even a
+  login shell skips. So this file spells out PATH and calls the binary directly.
+
+  1. Replace YOUR_USER and, if needed, the Node version in the two paths below.
+     Find them with:  which summarize-watch   and   dirname "$(which node)"
+  2. mkdir -p ~/watch/state && cp sh.summarize-watch.plist ~/Library/LaunchAgents/
   3. launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/sh.summarize-watch.plist
   4. Run it once now:  launchctl kickstart -k gui/$(id -u)/sh.summarize-watch
+     Watch:            tail -f ~/watch/state/launchd.log
   Remove with:        launchctl bootout gui/$(id -u)/sh.summarize-watch
 
-  A login shell (zsh -lc) is used so nvm/Homebrew PATH entries are available to `summarize-watch`
-  and `summarize`. Overlapping runs are refused by summarize-watch itself, so a slow night is safe.
+  Overlapping runs are refused by summarize-watch itself, so a slow night is safe.
 -->
 <plist version="1.0">
 <dict>
@@ -18,10 +22,18 @@
   <string>sh.summarize-watch</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/bin/zsh</string>
-    <string>-lc</string>
-    <string>summarize-watch run --config "$HOME/watch/watch.yaml"</string>
+    <string>/Users/YOUR_USER/.nvm/versions/node/v24.21.0/bin/summarize-watch</string>
+    <string>run</string>
+    <string>--config</string>
+    <string>/Users/YOUR_USER/watch/watch.yaml</string>
   </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Users/YOUR_USER/.nvm/versions/node/v24.21.0/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HOME</key>
+    <string>/Users/YOUR_USER</string>
+  </dict>
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>

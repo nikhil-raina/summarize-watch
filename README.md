@@ -170,7 +170,8 @@ stderr. Exit code 0 on success, 1 on failure, 130 when interrupted.
 There is no daemon by design. Pick one:
 
 - **macOS launchd** — [`examples/launchd/sh.summarize-watch.plist`](examples/launchd/sh.summarize-watch.plist)
-  runs at 03:00 through a login shell so nvm and Homebrew are on PATH.
+  runs at 03:00 with an explicit PATH (launchd does not read your shell profile, so nvm's bin and
+  Homebrew are spelled out).
 - **cron** — [`examples/cron.txt`](examples/cron.txt).
 - **systemd user timer** — [`examples/systemd/`](examples/systemd/).
 
