@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      # The drift alarm: the integration test runs the real summarize CLI when it is on PATH.
+      # It needs Node 24; on 22 the test is skipped automatically.
+      - if: matrix.node == 24
+        run: npm i -g @steipete/summarize
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

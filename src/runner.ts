@@ -445,9 +445,11 @@ export function renderReport(report: RunReport): string {
   const done = report.processed.filter((p) => p.outcome.kind === 'summarized').length;
   const verbatim = report.processed.filter((p) => p.outcome.kind === 'short_verbatim').length;
   const failed = report.processed.filter((p) => isFailure(p.outcome));
+  const interrupted = report.processed.filter((p) => p.outcome.kind === 'aborted').length;
+  const processed = report.processed.length - interrupted;
   const skipped = Object.entries(report.skippedAtSelection).map(([k, v]) => `${v} ${k}`).join(', ');
   lines.push(
-    `items    ${report.discovered} discovered${init ? ` (${init})` : ''} · ${report.processed.length} processed → ${done} done${verbatim ? ` · ${verbatim} verbatim` : ''} · ${failed.length} failed${skipped ? ` · skipped ${skipped}` : ''}`,
+    `items    ${report.discovered} discovered${init ? ` (${init})` : ''} · ${processed} processed → ${done} done${verbatim ? ` · ${verbatim} verbatim` : ''} · ${failed.length} failed${interrupted ? ` · ${interrupted} interrupted` : ''}${skipped ? ` · skipped ${skipped}` : ''}`,
   );
   if (report.tokensPrompt || report.tokensCompletion) {
     const model = mostCommonModel(report.processed);

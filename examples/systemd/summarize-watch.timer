@@ -1,0 +1,11 @@
+# ~/.config/systemd/user/summarize-watch.timer
+[Unit]
+Description=Run summarize-watch nightly
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target

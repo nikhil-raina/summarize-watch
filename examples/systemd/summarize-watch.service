@@ -1,0 +1,12 @@
+# ~/.config/systemd/user/summarize-watch.service
+# Then: systemctl --user daemon-reload && systemctl --user enable --now summarize-watch.timer
+[Unit]
+Description=summarize-watch: summarize new items from watched feeds
+
+[Service]
+Type=oneshot
+# Adjust if node/summarize live elsewhere (e.g. nvm: %h/.nvm/versions/node/v24.21.0/bin)
+Environment=PATH=%h/.local/bin:%h/.nvm/versions/node/v24.21.0/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=summarize-watch run --config %h/watch/watch.yaml
+StandardOutput=append:%h/watch/state/systemd.log
+StandardError=append:%h/watch/state/systemd.log
