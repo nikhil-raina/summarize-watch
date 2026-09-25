@@ -264,6 +264,11 @@ export class State {
     return row ? toItem(row) : null;
   }
 
+  findItemByNotePath(notePath: string): ItemRow | null {
+    const row = this.db.prepare(`${ITEM_SELECT} WHERE i.note_path = ? ORDER BY i.id LIMIT 1`).get(notePath) as Row | undefined;
+    return row ? toItem(row) : null;
+  }
+
   findDoneByUrl(url: string): ItemRow | null {
     const row = this.db.prepare(`${ITEM_SELECT} WHERE i.url = ? AND i.status = 'done' ORDER BY i.id LIMIT 1`).get(url) as Row | undefined;
     return row ? toItem(row) : null;
